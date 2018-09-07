@@ -5,6 +5,7 @@ using UnityEngine;
 public class touch_circle : MonoBehaviour {
 
     [SerializeField] float changing_speed;
+    [SerializeField] float movement_speed;
 
     private SpriteRenderer sprite;
     private Color initial_color;
@@ -12,6 +13,10 @@ public class touch_circle : MonoBehaviour {
     private bool start_blinking = false;
 
     private Vector2 initial_position;
+    private bool movement_trigger = true;
+
+    public UI_Touch ui;
+    private GameObject current_target;
 
 	// Use this for initialization
 	void Start () {
@@ -32,9 +37,29 @@ public class touch_circle : MonoBehaviour {
         else {
             sprite.color = new Vector4(0, 0, 0, 0);
         }
+        if (current_target != ui.Current_target) {
+            movement_trigger = true;
+        }
+        current_target = ui.Current_target;
+        if (current_target == null) return;
+        if (movement_trigger) {
+            movement_trigger = false;
+            StartCoroutine(move_circle());
+        }
+
 	}
 
     public void Current_State(bool state) {
         start_blinking = state;
+    }
+
+    private IEnumerator move_circle() {
+        float distance = Vector2.Distance(current_target.transform.position, transform.position);
+        while (distance > 0.1f) {
+            transform.position = Vector2.MoveTowards(transform.position, current_target.transform.position, movement_speed * Time.deltaTime);
+            distance = Vector2.Distance(current_target.transform.position, transform.position);
+            yield return null;
+        }
+        yield return null;
     }
 }

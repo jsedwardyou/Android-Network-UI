@@ -1412,6 +1412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   surrounding_cars: {fileID: 1840058057}
+  driving_car: {fileID: 1116174853}
   client: {fileID: 1836787891}
 --- !u!1 &1116174853
 GameObject:

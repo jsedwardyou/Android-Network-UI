@@ -17,8 +17,9 @@ public class NetworkClient_UI : MonoBehaviour {
     private string receivedMessage = "";
 
     private int[] surrounding_cars = new int[4];
+    public string[] car;
 
-	void Start () {
+    void Start () {
         client = new NetworkClient();
         if (!client.isConnected) {
             client.Connect("192.168.0.12", 25000);
@@ -38,6 +39,8 @@ public class NetworkClient_UI : MonoBehaviour {
     void Update()
     {
         SendInfo();
+
+        
     }
 
     static public void SendInfo() {
@@ -54,10 +57,12 @@ public class NetworkClient_UI : MonoBehaviour {
         StringMessage msg = new StringMessage();
         msg.value = message.ReadMessage<StringMessage>().value;
 
-        string[] deltas = msg.value.Split('|');
-        for (int i = 0; i < deltas.Length; i++) {
-            surrounding_cars[i] = int.Parse(deltas[i]);
-        }
+        string[] main = msg.value.Split('/');
+        string general_info;
+        string car_info;
+        general_info = main[0]; car_info = main[1];
+
+        car = car_info.Split('|');
 
         receivedMessage = msg.value;
     }
@@ -97,6 +102,6 @@ public class NetworkClient_UI : MonoBehaviour {
     }
 
     public void ConnectIP() {
-        client.Connect("192.168.0.3", 25000);
+        client.Connect("192.168.0.2", 25000);
     }
 }

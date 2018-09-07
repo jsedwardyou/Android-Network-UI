@@ -9,6 +9,13 @@ public class UI_Touch : MonoBehaviour {
 
     [SerializeField] private float speed;
 
+    private GameObject m_current_target;
+    public GameObject Current_target {
+        get {
+            return m_current_target;
+        }
+    }
+
 	// Use this for initialization
 	void Start () {
 		
@@ -21,16 +28,12 @@ public class UI_Touch : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             if (!hit) return;
             if (hit.transform.tag == "emoticon") {
-                Vector2 direction = hit.transform.position - wing.transform.position;
-
-                float angle = Vector2.SignedAngle(Vector2.right, direction);
-                wing.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+                m_current_target = hit.transform.gameObject;
             }
         }
-	}
-
-    private IEnumerator move_to_pos(GameObject emoticon) {
-
-        yield return null;
+        Vector2 direction = touch_circle.transform.position - wing.transform.position;
+        float angle = Vector2.SignedAngle(Vector2.right, direction);
+        wing.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
+
 }
