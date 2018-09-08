@@ -47,13 +47,13 @@ public class Car_Display : MonoBehaviour {
             car_rot[i - 1] = car_details[2];
         }
         for (int i = 0; i < car_num; i++) {
-            Debug.Log(car_num);
             cars[i].SetActive(true);
             float x_pos = float.Parse(car_pos[i].Split(',')[0]);
             float y_pos = float.Parse(car_pos[i].Split(',')[1]);
             Vector2 new_pos = new Vector2(driving_car.transform.position.x - x_pos, driving_car.transform.position.y - y_pos);
-            cars[i].transform.position = new_pos;
-            cars[i].transform.rotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])-90));
+            cars[i].transform.localPosition = new_pos - (Vector2)surrounding_cars.transform.position;
+            cars[i].transform.rotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
+            surrounding_cars.transform.rotation = Quaternion.Euler(new Vector3(0, 0, float.Parse(car_name[i])));
         }
         
     }

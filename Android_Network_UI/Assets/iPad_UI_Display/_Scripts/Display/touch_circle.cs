@@ -42,10 +42,7 @@ public class touch_circle : MonoBehaviour {
         }
         current_target = ui.Current_target;
         if (current_target == null) return;
-        if (movement_trigger) {
-            movement_trigger = false;
-            StartCoroutine(move_circle());
-        }
+
 
 	}
 
@@ -53,13 +50,5 @@ public class touch_circle : MonoBehaviour {
         start_blinking = state;
     }
 
-    private IEnumerator move_circle() {
-        float distance = Vector2.Distance(current_target.transform.position, transform.position);
-        while (distance > 0.1f) {
-            transform.position = Vector2.MoveTowards(transform.position, current_target.transform.position, movement_speed * Time.deltaTime);
-            distance = Vector2.Distance(current_target.transform.position, transform.position);
-            yield return null;
-        }
-        yield return null;
-    }
+
 }

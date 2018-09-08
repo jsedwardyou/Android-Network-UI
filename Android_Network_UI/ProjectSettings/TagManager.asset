@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - emoticon
+  - car
   layers:
   - Default
   - TransparentFX

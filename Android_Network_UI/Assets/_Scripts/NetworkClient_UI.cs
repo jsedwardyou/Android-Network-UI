@@ -22,15 +22,15 @@ public class NetworkClient_UI : MonoBehaviour {
     void Start () {
         client = new NetworkClient();
         if (!client.isConnected) {
-            client.Connect("192.168.0.12", 25000);
+            ConnectIP();
         }
 
         //RegisterHandle msg sent from Server
         client.RegisterHandler(888, ClientReceiveMessage);
 
 
-        LocalIPAddress();
-        NetworkActivity();
+        //LocalIPAddress();
+        //NetworkActivity();
 
         
 	}
