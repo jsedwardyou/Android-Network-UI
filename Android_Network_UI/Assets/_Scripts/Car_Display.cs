@@ -52,7 +52,7 @@ public class Car_Display : MonoBehaviour {
             float y_pos = float.Parse(car_pos[i].Split(',')[1]);
             Vector2 new_pos = new Vector2(driving_car.transform.position.x - x_pos, driving_car.transform.position.y - y_pos);
             cars[i].transform.localPosition = new_pos - (Vector2)surrounding_cars.transform.position;
-            cars[i].transform.rotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
+            cars[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
             surrounding_cars.transform.rotation = Quaternion.Euler(new Vector3(0, 0, float.Parse(car_name[i])));
         }
         

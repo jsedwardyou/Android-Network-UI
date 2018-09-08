@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/iPad_UI_Display/Scene/iPhone_UI_Display.unity
+    guid: a4bbfd4304a23b9488c0a8b60536f442
   m_configObjects: {}

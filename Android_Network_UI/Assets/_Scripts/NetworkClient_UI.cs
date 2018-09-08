@@ -102,6 +102,6 @@ public class NetworkClient_UI : MonoBehaviour {
     }
 
     public void ConnectIP() {
-        client.Connect("192.168.0.2", 25000);
+        client.Connect("192.168.0.33", 25000);
     }
 }
