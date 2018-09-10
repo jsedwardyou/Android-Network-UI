@@ -7,6 +7,8 @@ public class UI_Touch : MonoBehaviour {
 
     [SerializeField] private GameObject wing;
     [SerializeField] private GameObject touch_circle;
+    [SerializeField] private GameObject mini_circle;
+    [SerializeField] private GameObject message_sent;
     private Vector3 initial_circle_pos;
 
 
@@ -15,10 +17,10 @@ public class UI_Touch : MonoBehaviour {
 
     [SerializeField] private float movement_speed;
 
-    [SerializeField] private GameObject bluebox;
     [SerializeField] private Text message;
 
     private bool trigger_emoji = true;
+    private bool can_select = true;
 
     private GameObject m_current_car;
     public GameObject current_car
@@ -49,7 +51,7 @@ public class UI_Touch : MonoBehaviour {
 	void Update () {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && can_select)
         {
             if (!hit) return;
             if (hit.transform.tag == "emoticon")
@@ -57,26 +59,26 @@ public class UI_Touch : MonoBehaviour {
                 m_current_target = hit.transform.gameObject;
             }
             else if (hit.transform.tag == "car") {
+                if (m_current_car != null) {
+                    m_current_car.GetComponent<Car_Selection>().Change_to_not_selected();
+                }
                 m_current_car = hit.transform.gameObject;
+                m_current_car.GetComponent<Car_Selection>().Change_to_selected();
             }
         }
 
         if (m_current_car == null) {
             em.Current_State(false);
             circle.Current_State(false);
-            bluebox.SetActive(false);
             return;
         }
-        bluebox.SetActive(true);
         em.Current_State(true);
         circle.Current_State(true);
 
-        bluebox.transform.position = m_current_car.transform.position;
-
         if (m_current_target == null) return;
-        Vector2 direction = touch_circle.transform.position - wing.transform.position;
-        float angle = Vector2.SignedAngle(Vector2.right, direction);
-        wing.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        //Vector2 direction = touch_circle.transform.position - wing.transform.position;
+        //float angle = Vector2.SignedAngle(Vector2.right, direction);
+        //wing.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
         if (trigger_emoji == false) return;
         StartCoroutine(Car_Interaction());
@@ -85,25 +87,35 @@ public class UI_Touch : MonoBehaviour {
 
     private IEnumerator Car_Interaction() {
         trigger_emoji = false;
-        float distance = Vector2.Distance(m_current_target.transform.position, touch_circle.transform.position);
-        while (distance > 0.1f)
+        can_select = false;
+        Vector3 initial_emoji_pos = m_current_target.transform.position;
+        //Move the touch_circle to emoji's position
+        touch_circle.transform.position = m_current_target.transform.position;
+        m_current_target.transform.SetParent(touch_circle.transform);
+
+        float distance = Vector2.Distance(touch_circle.transform.position, mini_circle.transform.position);
+        while (distance > 0.05f)
         {
-            touch_circle.transform.position = Vector2.MoveTowards(touch_circle.transform.position, m_current_target.transform.position, movement_speed * Time.deltaTime);
-            distance = Vector2.Distance(m_current_target.transform.position, touch_circle.transform.position);
+            touch_circle.transform.position = Vector2.MoveTowards(touch_circle.transform.position, mini_circle.transform.position, movement_speed * Time.deltaTime);
+            distance = Vector2.Distance(touch_circle.transform.position, mini_circle.transform.position);
             yield return null;
         }
-        message.text = "메세지가 성공적으로 전달되었습니다";
+        message_sent.SetActive(true);
         yield return new WaitForSeconds(2.0f);
-        message.text = "";
-        Reset_UI();
+        message_sent.SetActive(false);
+        Reset_UI(initial_emoji_pos);
         trigger_emoji = true;
+        can_select = true;
         yield return null;
     }
 
-    private void Reset_UI() {
+    private void Reset_UI(Vector3 initial_pos) {
+        m_current_car.GetComponent<Car_Selection>().Change_to_not_selected();
+        m_current_target.transform.SetParent(null);
+        m_current_target.transform.position = initial_pos;
         m_current_car = null;
         m_current_target = null;
         touch_circle.transform.position = initial_circle_pos;
-        wing.transform.rotation = Quaternion.Euler(Vector3.zero);
+        
     }
 }

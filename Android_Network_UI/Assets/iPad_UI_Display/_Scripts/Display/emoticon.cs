@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class emoticon : MonoBehaviour {
 
-    private SpriteRenderer[] emoticons = new SpriteRenderer[3];
+    private SpriteRenderer[] emoticons = new SpriteRenderer[4];
 
     private bool visible = false;
 

@@ -4,32 +4,31 @@ using UnityEngine;
 
 public class Car_Display : MonoBehaviour {
 
-    [SerializeField] private GameObject surrounding_cars;
-    [SerializeField] private GameObject driving_car;
+    [Header("Car UI")]
+    public GameObject car_ui;
+    [SerializeField] private float car_ui_size;
 
-    private GameObject[] cars = new GameObject[4];
+    [SerializeField] private GameObject driving_car;
+    [SerializeField] private int initial_pool;
+    [SerializeField] private Transform car_parent;
+
+    private List<GameObject> car_pool = new List<GameObject>();
 
     [SerializeField] NetworkClient_UI client;
 
 	// Use this for initialization
 	void Start () {
-        for (int i = 0; i < cars.Length; i++) {
-            cars[i] = surrounding_cars.transform.GetChild(i).gameObject;
+        for (int i = 0; i < initial_pool; i++) {
+            GameObject spawned_car_ui = Instantiate(car_ui, Vector2.zero, Quaternion.identity);
+            spawned_car_ui.transform.localScale = new Vector3(car_ui_size, car_ui_size, car_ui_size);
+            spawned_car_ui.SetActive(false);
+            spawned_car_ui.transform.SetParent(car_parent);
+            car_pool.Add(spawned_car_ui);
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        for (int i = 0; i < cars.Length; i++) {
-            if (client.GetState(i) == 0)
-            {
-                cars[i].SetActive(false);
-            }
-            else if (client.GetState(i) == 1) {
-                cars[i].SetActive(true);
-            }
-        }
-
         string[] car = client.car;
         if (car.Length < 2) {
             return;
@@ -46,15 +45,34 @@ public class Car_Display : MonoBehaviour {
             car_pos[i - 1] = car_details[1];
             car_rot[i - 1] = car_details[2];
         }
-        for (int i = 0; i < car_num; i++) {
-            cars[i].SetActive(true);
-            float x_pos = float.Parse(car_pos[i].Split(',')[0]);
-            float y_pos = float.Parse(car_pos[i].Split(',')[1]);
-            Vector2 new_pos = new Vector2(driving_car.transform.position.x - x_pos, driving_car.transform.position.y - y_pos);
-            cars[i].transform.localPosition = new_pos - (Vector2)surrounding_cars.transform.position;
-            cars[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
-            surrounding_cars.transform.rotation = Quaternion.Euler(new Vector3(0, 0, float.Parse(car_name[i])));
+
+        if (car_num > car_pool.Count)
+        {
+            for (int i = 0; i < car_num - car_pool.Count; i++)
+            {
+                GameObject spawned_car_ui = Instantiate(car_ui, Vector2.zero, Quaternion.identity);
+                spawned_car_ui.transform.localScale = new Vector3(car_ui_size, car_ui_size, car_ui_size);
+                spawned_car_ui.SetActive(false);
+                spawned_car_ui.transform.SetParent(car_parent);
+                car_pool.Add(spawned_car_ui);
+            }
         }
+        else {
+            for (int i = 0; i < car_num; i++) {
+                car_pool[i].SetActive(true);
+                float x_pos = float.Parse(car_pos[i].Split(',')[0]);
+                float y_pos = float.Parse(car_pos[i].Split(',')[1]);
+                Vector2 new_pos = new Vector2(driving_car.transform.position.x - x_pos, driving_car.transform.position.y - y_pos);
+                car_pool[i].transform.localPosition = new_pos - (Vector2)car_parent.transform.position;
+                car_pool[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
+                car_parent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, float.Parse(car_name[i])));
+            }
+            for (int i = car_num; i < car_pool.Count; i++) {
+                car_pool[i].SetActive(false);
+            }
+        }
+
+
         
     }
 }

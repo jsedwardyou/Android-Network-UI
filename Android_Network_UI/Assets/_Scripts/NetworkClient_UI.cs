@@ -9,10 +9,10 @@ using UnityEngine.UI;
 
 public class NetworkClient_UI : MonoBehaviour {
 
-    [SerializeField] private Text ipAddress;
     [SerializeField] private Text status;
 
     static NetworkClient client;
+    private string ipAddress = "192.168.0.3";
 
     private string receivedMessage = "";
 
@@ -39,8 +39,7 @@ public class NetworkClient_UI : MonoBehaviour {
     void Update()
     {
         SendInfo();
-
-        
+        Debug.Log(receivedMessage);
     }
 
     static public void SendInfo() {
@@ -81,7 +80,7 @@ public class NetworkClient_UI : MonoBehaviour {
                 break;
             }
         }
-        ipAddress.text = "IP Address: " + localIP;
+        //ipAddress.text = "IP Address: " + localIP;
         return localIP;
     }
 
@@ -102,6 +101,11 @@ public class NetworkClient_UI : MonoBehaviour {
     }
 
     public void ConnectIP() {
-        client.Connect("192.168.0.33", 25000);
+        Debug.Log(ipAddress);
+        client.Connect(ipAddress, 25000);
+    }
+
+    public void SetIP(Text value) {
+        ipAddress = value.text;
     }
 }
