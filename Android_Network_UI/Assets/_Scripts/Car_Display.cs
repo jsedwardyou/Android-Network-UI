@@ -37,6 +37,7 @@ public class Car_Display : MonoBehaviour {
         string[] car_name = new string[car_num];
         string[] car_pos  = new string[car_num];
         string[] car_rot  = new string[car_num];
+        string[] car_id = new string[car_num];
 
         for (int i = 1; i < car.Length - 1; i++)
         {
@@ -44,6 +45,7 @@ public class Car_Display : MonoBehaviour {
             car_name[i - 1] = car_details[0];
             car_pos[i - 1] = car_details[1];
             car_rot[i - 1] = car_details[2];
+            car_id[i - 1] = car_details[3];
         }
 
         if (car_num > car_pool.Count)
@@ -66,6 +68,7 @@ public class Car_Display : MonoBehaviour {
                 car_pool[i].transform.localPosition = new_pos - (Vector2)car_parent.transform.position;
                 car_pool[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, -float.Parse(car_rot[i])));
                 car_parent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, float.Parse(car_name[i])));
+                car_pool[i].GetComponent<Car_ID>().car_id = int.Parse(car_id[i]);
             }
             for (int i = car_num; i < car_pool.Count; i++) {
                 car_pool[i].SetActive(false);

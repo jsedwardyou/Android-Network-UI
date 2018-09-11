@@ -12,12 +12,13 @@ public class NetworkClient_UI : MonoBehaviour {
     [SerializeField] private Text status;
 
     static NetworkClient client;
-    private string ipAddress = "192.168.0.3";
+    private string ipAddress = "192.168.0.2";
 
     private string receivedMessage = "";
 
     private int[] surrounding_cars = new int[4];
     public string[] car;
+    public string car_message = "";
 
     void Start () {
         client = new NetworkClient();
@@ -39,7 +40,6 @@ public class NetworkClient_UI : MonoBehaviour {
     void Update()
     {
         SendInfo();
-        Debug.Log(receivedMessage);
     }
 
     static public void SendInfo() {
@@ -60,6 +60,7 @@ public class NetworkClient_UI : MonoBehaviour {
         string general_info;
         string car_info;
         general_info = main[0]; car_info = main[1];
+        car_message = main[2].Split('|')[1];
 
         car = car_info.Split('|');
 

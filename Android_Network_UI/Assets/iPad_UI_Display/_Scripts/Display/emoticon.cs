@@ -6,7 +6,7 @@ public class emoticon : MonoBehaviour {
 
     private SpriteRenderer[] emoticons = new SpriteRenderer[4];
 
-    private bool visible = false;
+    private bool visible = true;
 
     private void Start()
     {
@@ -35,6 +35,6 @@ public class emoticon : MonoBehaviour {
 	}
 
     public void Current_State(bool state) {
-        visible = state;
+        this.gameObject.SetActive(state);
     }
 }
