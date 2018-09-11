@@ -30,7 +30,7 @@ public class voice_input : MonoBehaviour {
 
     public void turn_on_mic() {
         
-        m_audio_source.clip = Microphone.Start(Microphone.devices[0], false, mic_length, 44100);
+        m_audio_source.clip = Microphone.Start(null, false, mic_length, 44100);
         while (!(Microphone.GetPosition(null) > 0)) { }
         m_audio_source.Play();
     }
