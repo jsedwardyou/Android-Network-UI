@@ -140,10 +140,11 @@ public class UI_Touch : MonoBehaviour {
         Vector3 initial_emoji_pos = m_current_target.transform.position;
         touch_circle.transform.position = m_current_target.transform.position;
         //Detect user's voice
-        voice.turn_on_mic();
-        while (voice.Audio_Source.isPlaying) {
-            yield return null;
-        }
+        //voice.turn_on_mic();
+        //while (voice.Audio_Source.isPlaying) {
+        //    yield return null;
+        //}
+        yield return new WaitForSeconds(5.0f);
         message_sent.SetActive(true);
         yield return new WaitForSeconds(2.0f);
         message_sent.SetActive(false);
