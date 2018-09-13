@@ -9,6 +9,7 @@ public class UI_Touch : MonoBehaviour {
     [SerializeField] private GameObject touch_circle;
     [SerializeField] private GameObject mini_circle;
     [SerializeField] private GameObject message_sent;
+    [SerializeField] private GameObject message_arrival;
     private Vector3 initial_circle_pos;
     public NetworkClient_UI network;
     public GameObject received_em;
@@ -31,7 +32,7 @@ public class UI_Touch : MonoBehaviour {
         {
             return m_current_car;
         }
-        set{
+        set {
             m_current_car = value;
         }
 
@@ -44,31 +45,66 @@ public class UI_Touch : MonoBehaviour {
         }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Sound for Interaction
+    private AudioSource audio_source;
+
+    // Use this for initialization
+    void Start() {
         initial_circle_pos = touch_circle.transform.position;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        audio_source = GetComponent<AudioSource>();
+    }
+
+    // Update is called once per frame
+    void Update() {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
         //Received Message
         if (network.car_message != "") {
             string[] message = network.car_message.Split(',');
-            int car_id = int.Parse(message[0]);
-            int num = int.Parse(message[1]);
-            for (int i = 0; i < cars.transform.childCount; i++) {
-                if (!cars.transform.GetChild(i).gameObject.activeInHierarchy) continue;
+            int type = int.Parse(message[0]);
+            int car_id = int.Parse(message[1]);
+            int num = int.Parse(message[2]);
 
-                if (cars.transform.GetChild(i).GetComponent<Car_ID>().car_id == car_id) {
-                    m_current_car = cars.transform.GetChild(i).gameObject;
-                    m_current_car.GetComponent<Car_Selection>().Change_to_selected();
+            if (type == 0)
+            {
+                for (int i = 0; i < cars.transform.childCount; i++) {
+                    if (cars.transform.GetChild(i).GetComponent<Car_ID>().car_id == car_id) {
+                        m_current_car = cars.transform.GetChild(i).gameObject;
+                        m_current_car.GetComponent<Car_Selection>().Change_to_selected();
+                    }
                 }
-                Debug.Log(car_id);
+                GameObject emoticon = received_em.transform.GetChild(num).gameObject;
+                StartCoroutine(Recommendation(emoticon));
             }
-            GameObject emoticon = received_em.transform.GetChild(num).gameObject;
-            StartCoroutine(Message_Received(emoticon));
+            else if (type == 1) {
+                for (int i = 0; i < cars.transform.childCount; i++)
+                {
+                    if (!cars.transform.GetChild(i).gameObject.activeInHierarchy) continue;
+
+                    if (cars.transform.GetChild(i).GetComponent<Car_ID>().car_id == car_id)
+                    {
+                        m_current_car = cars.transform.GetChild(i).gameObject;
+                        m_current_car.GetComponent<Car_Selection>().Change_to_selected();
+                    }
+                }
+                GameObject emoticon = received_em.transform.GetChild(num).gameObject;
+                Debug.Log(emoticon.name);
+                StartCoroutine(Message_Received(emoticon));
+            }
+            else if (type == 2)
+            {
+                for (int i = 0; i < cars.transform.childCount; i++)
+                {
+                    if (cars.transform.GetChild(i).GetComponent<Car_ID>().car_id == car_id)
+                    {
+                        m_current_car = cars.transform.GetChild(i).gameObject;
+                        m_current_car.GetComponent<Car_Selection>().Change_to_selected();
+                    }
+                }
+                GameObject emoticon = received_em.transform.GetChild(num).gameObject;
+                Debug.Log(emoticon.name);
+                StartCoroutine(Message_Received(emoticon));
+            }
         }
 
         if (Input.GetMouseButtonDown(0) && can_select)
@@ -154,13 +190,25 @@ public class UI_Touch : MonoBehaviour {
         yield return null;
     }
 
+    private IEnumerator Recommendation(GameObject emoticon) {
+        circle.transform.position = emoticon.transform.position;
+        if (!audio_source.isPlaying) {
+            audio_source.Play();
+        }
+        yield return null;
+    }
+
     private IEnumerator Message_Received(GameObject obj) {
         obj.SetActive(true);
+        message_arrival.SetActive(true);
         obj.transform.position = circle.transform.position;
+        if (!audio_source.isPlaying) {
+            audio_source.Play();
+        }
         yield return new WaitForSeconds(3.0f);
-
+        message_arrival.SetActive(false);
         obj.SetActive(false);
-
+        audio_source.Stop();
         yield return null;
     }
 
